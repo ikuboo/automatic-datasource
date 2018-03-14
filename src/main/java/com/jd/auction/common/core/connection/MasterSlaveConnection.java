@@ -27,17 +27,8 @@ public final class MasterSlaveConnection extends AbstractConnectionAdapter {
 
     public Connection getConnection(final SQLType sqlType) throws SQLException {
         cachedSQLType = sqlType;
-
         NamedDataSource namedDataSource = autoMaticDataSource.getDataSource(sqlType);
-        String dataSourceName = namedDataSource.getName();
-
-        if (getCachedConnections().containsKey(dataSourceName)) {
-            return getCachedConnections().get(dataSourceName);
-        }
-
-        Connection connection = namedDataSource.getDataSource().getConnection();
-        getCachedConnections().put(dataSourceName, connection);
-        return connection;
+        return getCachedConnection(namedDataSource);
     }
     
     @Override

@@ -2,6 +2,8 @@ package com.jd.auction.common.core.connection;
 
 
 
+import com.jd.auction.common.core.datasouce.NamedDataSource;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -132,7 +134,17 @@ public abstract class AbstractConnectionAdapter extends AbstractUnsupportedOpera
     public final void setHoldability(final int holdability) throws SQLException {
     }
 
-    public Map<String, Connection> getCachedConnections() {
-        return cachedConnections;
+    protected Connection getCachedConnection(NamedDataSource namedDataSource) throws SQLException {
+        String dataSourceName = namedDataSource.getName();
+        if (cachedConnections.containsKey(dataSourceName)) {
+            return cachedConnections.get(dataSourceName);
+        }
+
+        Connection connection = namedDataSource.getDataSource().getConnection();
+        cachedConnections.put(dataSourceName, connection);
+        //回调方法
+        replayMethodsInvocation(connection);
+        return connection;
     }
+
 }
