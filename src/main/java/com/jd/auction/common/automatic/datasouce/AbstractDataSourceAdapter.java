@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -42,10 +43,10 @@ public abstract class AbstractDataSourceAdapter extends AbstractUnsupportedOpera
     }
 
     public DatabaseType getDatabaseType() throws SQLException {
-        Collection<DataSource> allDataSource = getAllDataSource();
+        Collection<NamedDataSource> allDataSource = getAllDataSource();
         DatabaseType result = null;
-        for (DataSource each : allDataSource) {
-            DatabaseType databaseType = getDatabaseType(each);
+        for (NamedDataSource each : allDataSource) {
+            DatabaseType databaseType = getDatabaseType(each.getDataSource());
             Preconditions.checkState(null == result || result.equals(databaseType), String.format("Database type inconsistent with '%s' and '%s'", result, databaseType));
             result = databaseType;
         }
@@ -61,5 +62,5 @@ public abstract class AbstractDataSourceAdapter extends AbstractUnsupportedOpera
         }
     }
 
-    protected abstract Collection<DataSource> getAllDataSource();
+    protected abstract List<NamedDataSource> getAllDataSource();
 }

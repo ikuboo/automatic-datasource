@@ -6,6 +6,8 @@ import com.jd.auction.common.automatic.balancing.WeightRobinLoadBalance;
 import com.jd.auction.common.automatic.connection.MasterSlaveConnection;
 import com.jd.auction.common.automatic.constant.LoadBalanceStrategy;
 import com.jd.auction.common.automatic.constant.SQLType;
+import com.jd.auction.common.automatic.monitor.DataSourceState;
+import com.jd.auction.common.automatic.monitor.DataSourceStateJudge;
 import com.jd.auction.common.automatic.utils.StringUtils;
 
 import javax.sql.DataSource;
@@ -26,6 +28,8 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
     private NamedDataSource masterDataSource;
     private List<NamedDataSource> slaveDataSources;
     private LoadBalanceStrategy loadBalanceStrategy;
+    //重试次数，默认为3
+    private Integer retry = 3;
 
     private static final ThreadLocal<Boolean> USER_MASTER_FLAG = new ThreadLocal<Boolean>() {
         @Override
@@ -68,6 +72,10 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
 
         Preconditions.checkNotNull(masterDataSource.getDataSource(), "masterDataSource.datasouce is null");
         //TODO 校验回头在做
+
+        //初始化数据源状态
+        DataSourceStateJudge.init(getAllDataSource(), retry);
+
     }
 
     /**
@@ -87,12 +95,10 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
 
 
     @Override
-    protected Collection<DataSource> getAllDataSource() {
-        List<DataSource> allDataSource = new ArrayList<>(slaveDataSources.size() + 1);
-        allDataSource.add(masterDataSource.getDataSource());
-        for(NamedDataSource namedDataSource:slaveDataSources){
-            allDataSource.add(namedDataSource.getDataSource());
-        }
+    protected List<NamedDataSource> getAllDataSource() {
+        List<NamedDataSource> allDataSource = new ArrayList<>(slaveDataSources.size() + 1);
+        allDataSource.add(masterDataSource);
+        allDataSource.addAll(slaveDataSources);
         return allDataSource;
     }
 
