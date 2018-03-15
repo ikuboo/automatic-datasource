@@ -1,9 +1,9 @@
 
 
-package com.jd.auction.common.core.connection;
+package com.jd.auction.common.automatic.connection;
 
 
-import com.jd.auction.common.core.api.WrapperAdapter;
+import com.jd.auction.common.automatic.common.WrapperAdapter;
 
 import java.sql.Array;
 import java.sql.Blob;

@@ -1,7 +1,7 @@
-package com.jd.auction.common.core.statement;
+package com.jd.auction.common.automatic.statement;
 
 
-import com.jd.auction.common.core.api.WrapperAdapter;
+import com.jd.auction.common.automatic.common.WrapperAdapter;
 
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;

@@ -1,7 +1,7 @@
-package com.jd.auction.common.core.parsing.lexer.analyzer;
+package com.jd.auction.common.automatic.parsing.lexer.analyzer;
 
 
-import com.jd.auction.common.core.exception.AutomaticDatasourceException;
+import com.jd.auction.common.automatic.exception.AutomaticDatasourceException;
 
 
 public final class UnterminatedCharException extends AutomaticDatasourceException {

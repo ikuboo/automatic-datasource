@@ -1,13 +1,13 @@
 
 
-package com.jd.auction.common.core.connection;
+package com.jd.auction.common.automatic.connection;
 
 
-import com.jd.auction.common.core.constant.SQLType;
-import com.jd.auction.common.core.datasouce.AutoMaticDataSource;
-import com.jd.auction.common.core.datasouce.NamedDataSource;
-import com.jd.auction.common.core.statement.MasterSlavePreparedStatement;
-import com.jd.auction.common.core.statement.MasterSlaveStatement;
+import com.jd.auction.common.automatic.constant.SQLType;
+import com.jd.auction.common.automatic.datasouce.AutoMaticDataSource;
+import com.jd.auction.common.automatic.datasouce.NamedDataSource;
+import com.jd.auction.common.automatic.preparedstatement.MasterSlavePreparedStatement;
+import com.jd.auction.common.automatic.statement.MasterSlaveStatement;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -83,7 +83,7 @@ public final class MasterSlaveConnection extends AbstractConnectionAdapter {
     
     @Override
     public void close() throws SQLException {
-        AutoMaticDataSource.resetDMLFlag();
+        AutoMaticDataSource.resetMasterFlag();
         super.close();
     }
 }

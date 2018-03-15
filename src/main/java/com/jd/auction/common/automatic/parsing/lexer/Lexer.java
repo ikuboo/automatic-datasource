@@ -1,12 +1,12 @@
-package com.jd.auction.common.core.parsing.lexer;
+package com.jd.auction.common.automatic.parsing.lexer;
 
 
-import com.jd.auction.common.core.exception.SQLParsingException;
-import com.jd.auction.common.core.parsing.lexer.analyzer.CharType;
-import com.jd.auction.common.core.parsing.lexer.analyzer.Dictionary;
-import com.jd.auction.common.core.parsing.lexer.analyzer.Tokenizer;
-import com.jd.auction.common.core.parsing.lexer.token.Assist;
-import com.jd.auction.common.core.parsing.lexer.token.Token;
+import com.jd.auction.common.automatic.exception.SQLParsingException;
+import com.jd.auction.common.automatic.parsing.lexer.analyzer.CharType;
+import com.jd.auction.common.automatic.parsing.lexer.analyzer.Dictionary;
+import com.jd.auction.common.automatic.parsing.lexer.analyzer.Tokenizer;
+import com.jd.auction.common.automatic.parsing.lexer.token.Assist;
+import com.jd.auction.common.automatic.parsing.lexer.token.Token;
 
 
 public class Lexer {

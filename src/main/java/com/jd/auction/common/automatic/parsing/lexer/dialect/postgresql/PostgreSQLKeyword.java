@@ -1,6 +1,6 @@
-package com.jd.auction.common.core.parsing.lexer.dialect.postgresql;
+package com.jd.auction.common.automatic.parsing.lexer.dialect.postgresql;
 
-import com.jd.auction.common.core.parsing.lexer.token.Keyword;
+import com.jd.auction.common.automatic.parsing.lexer.token.Keyword;
 
 public enum PostgreSQLKeyword implements Keyword {
     

@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @author yuanchunsen@jd.com
  *         2018/3/15.
  */
-public class WeightRobinLoadBalanceStrategy implements LoadBalanceStrategy {
+public class WeightRobinLoadBalance implements LoadBalance {
     private final List<NamedDataSource> switchNamedDataSources = new ArrayList<>();
     private final AtomicInteger loop = new AtomicInteger(0);
     private final ReentrantLock lock = new ReentrantLock();

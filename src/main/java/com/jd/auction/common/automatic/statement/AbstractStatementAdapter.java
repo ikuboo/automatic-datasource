@@ -1,4 +1,4 @@
-package com.jd.auction.common.core.statement;
+package com.jd.auction.common.automatic.statement;
 
 
 import java.sql.SQLException;

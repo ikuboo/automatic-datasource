@@ -1,4 +1,4 @@
-package com.jd.auction.common.core.constant;
+package com.jd.auction.common.automatic.constant;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;

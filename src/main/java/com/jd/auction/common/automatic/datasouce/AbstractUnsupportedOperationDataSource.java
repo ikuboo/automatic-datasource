@@ -1,7 +1,7 @@
-package com.jd.auction.common.core.datasouce;
+package com.jd.auction.common.automatic.datasouce;
 
 
-import com.jd.auction.common.core.api.WrapperAdapter;
+import com.jd.auction.common.automatic.common.WrapperAdapter;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;

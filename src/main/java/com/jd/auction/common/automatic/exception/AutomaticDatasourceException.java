@@ -1,4 +1,4 @@
-package com.jd.auction.common.core.exception;
+package com.jd.auction.common.automatic.exception;
 
 /**
  * Base exception for AutoMaticDataSource

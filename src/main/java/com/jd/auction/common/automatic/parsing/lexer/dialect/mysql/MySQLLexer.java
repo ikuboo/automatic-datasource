@@ -1,8 +1,8 @@
-package com.jd.auction.common.core.parsing.lexer.dialect.mysql;
+package com.jd.auction.common.automatic.parsing.lexer.dialect.mysql;
 
 
-import com.jd.auction.common.core.parsing.lexer.Lexer;
-import com.jd.auction.common.core.parsing.lexer.analyzer.Dictionary;
+import com.jd.auction.common.automatic.parsing.lexer.Lexer;
+import com.jd.auction.common.automatic.parsing.lexer.analyzer.Dictionary;
 
 
 public final class MySQLLexer extends Lexer {

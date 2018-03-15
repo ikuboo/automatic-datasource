@@ -1,7 +1,7 @@
-package com.jd.auction.common.core.parsing.lexer.dialect.mysql;
+package com.jd.auction.common.automatic.parsing.lexer.dialect.mysql;
 
 
-import com.jd.auction.common.core.parsing.lexer.token.Keyword;
+import com.jd.auction.common.automatic.parsing.lexer.token.Keyword;
 
 
 public enum MySQLKeyword implements Keyword {

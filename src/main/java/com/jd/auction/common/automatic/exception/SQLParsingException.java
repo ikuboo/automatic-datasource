@@ -1,7 +1,7 @@
-package com.jd.auction.common.core.exception;
+package com.jd.auction.common.automatic.exception;
 
-import com.jd.auction.common.core.parsing.lexer.Lexer;
-import com.jd.auction.common.core.parsing.lexer.token.TokenType;
+import com.jd.auction.common.automatic.parsing.lexer.Lexer;
+import com.jd.auction.common.automatic.parsing.lexer.token.TokenType;
 
 /**
  * @author yuanchunsen@jd.com

@@ -1,10 +1,10 @@
-package com.jd.auction.common.core.parsing.lexer.analyzer;
+package com.jd.auction.common.automatic.parsing.lexer.analyzer;
 
 
 
-import com.jd.auction.common.core.parsing.lexer.token.DefaultKeyword;
-import com.jd.auction.common.core.parsing.lexer.token.Keyword;
-import com.jd.auction.common.core.parsing.lexer.token.TokenType;
+import com.jd.auction.common.automatic.parsing.lexer.token.DefaultKeyword;
+import com.jd.auction.common.automatic.parsing.lexer.token.Keyword;
+import com.jd.auction.common.automatic.parsing.lexer.token.TokenType;
 
 import java.util.HashMap;
 import java.util.Map;

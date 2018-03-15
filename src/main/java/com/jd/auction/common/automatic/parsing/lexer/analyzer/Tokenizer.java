@@ -1,11 +1,11 @@
-package com.jd.auction.common.core.parsing.lexer.analyzer;
+package com.jd.auction.common.automatic.parsing.lexer.analyzer;
 
 
-import com.jd.auction.common.core.parsing.lexer.token.DefaultKeyword;
-import com.jd.auction.common.core.parsing.lexer.token.Literals;
-import com.jd.auction.common.core.parsing.lexer.token.Symbol;
-import com.jd.auction.common.core.parsing.lexer.token.Token;
-import com.jd.auction.common.core.parsing.lexer.token.TokenType;
+import com.jd.auction.common.automatic.parsing.lexer.token.DefaultKeyword;
+import com.jd.auction.common.automatic.parsing.lexer.token.Literals;
+import com.jd.auction.common.automatic.parsing.lexer.token.Symbol;
+import com.jd.auction.common.automatic.parsing.lexer.token.Token;
+import com.jd.auction.common.automatic.parsing.lexer.token.TokenType;
 
 
 public final class Tokenizer {

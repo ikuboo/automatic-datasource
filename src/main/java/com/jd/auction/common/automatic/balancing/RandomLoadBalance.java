@@ -8,7 +8,7 @@ import java.util.Random;
 /**
  * 随机策略
  */
-public final class RandomLoadBalanceStrategy implements LoadBalanceStrategy {
+public final class RandomLoadBalance implements LoadBalance {
     @Override
     public NamedDataSource getDataSource(final List<NamedDataSource> slaveDataSources) {
         return slaveDataSources.get(new Random().nextInt(slaveDataSources.size()));

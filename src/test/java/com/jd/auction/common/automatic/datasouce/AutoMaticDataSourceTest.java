@@ -1,4 +1,4 @@
-package com.jd.auction.common.core.datasouce;
+package com.jd.auction.common.automatic.datasouce;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +26,6 @@ public class AutoMaticDataSourceTest {
         while (true) {
             Connection connection = autoMaticDataSource.getConnection();
 
-
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("select * from t_user where id = 1");
 
@@ -47,7 +46,7 @@ public class AutoMaticDataSourceTest {
     @Test
     public void tranactionTest() throws Exception {
         Connection connection = autoMaticDataSource.getConnection();
-
+        connection.setAutoCommit(false);
 
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("select * from t_user where id = 1");
@@ -60,7 +59,12 @@ public class AutoMaticDataSourceTest {
         statement.close();
 
         statement = connection.createStatement();
-        boolean execute = statement.execute("update t_user set name='test222' where id = 15");
+        boolean execute = statement.execute("update t_user set name='test_v3' where id = 15");
+        System.out.println("update:" + execute);
+        statement.close();
+
+        statement = connection.createStatement();
+        execute = statement.execute("update t_user set name='test_v3' where id = 16");
         System.out.println("update:" + execute);
         statement.close();
 
@@ -74,7 +78,7 @@ public class AutoMaticDataSourceTest {
         }
         resultSet.close();
         statement.close();
-
+        connection.commit();
         connection.close();
 
     }
@@ -83,7 +87,7 @@ public class AutoMaticDataSourceTest {
     public void rollbackTest() throws Exception {
 
         Connection connection = autoMaticDataSource.getConnection();
-        //connection.setAutoCommit(false);
+        connection.setAutoCommit(false);
 
         Statement statement = connection.createStatement();
         ResultSet resultSet = statement.executeQuery("select * from t_user where id = 1");
@@ -96,8 +100,13 @@ public class AutoMaticDataSourceTest {
         statement.close();
 
         statement = connection.createStatement();
-        int result = statement.executeUpdate("update t_user set name='test_v3' where id = 15");
-        System.out.println("update:" + result);
+        boolean execute = statement.execute("update t_user set name='test_v4' where id = 15");
+        System.out.println("update:" + execute);
+        statement.close();
+
+        statement = connection.createStatement();
+        execute = statement.execute("update t_user set name='test_v4' where id = 16");
+        System.out.println("update:" + execute);
         statement.close();
 
 
@@ -110,13 +119,7 @@ public class AutoMaticDataSourceTest {
         }
         resultSet.close();
         statement.close();
-
-
-        statement = connection.createStatement();
-        result = statement.executeUpdate("update t_user set name='test_v3' where id = 16");
-        System.out.println("update:" + result);
-        statement.close();
-
+        connection.rollback();
         connection.close();
 
     }

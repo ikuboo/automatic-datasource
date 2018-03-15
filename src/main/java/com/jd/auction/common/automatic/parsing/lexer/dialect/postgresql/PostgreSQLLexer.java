@@ -1,8 +1,8 @@
-package com.jd.auction.common.core.parsing.lexer.dialect.postgresql;
+package com.jd.auction.common.automatic.parsing.lexer.dialect.postgresql;
 
 
-import com.jd.auction.common.core.parsing.lexer.Lexer;
-import com.jd.auction.common.core.parsing.lexer.analyzer.Dictionary;
+import com.jd.auction.common.automatic.parsing.lexer.Lexer;
+import com.jd.auction.common.automatic.parsing.lexer.analyzer.Dictionary;
 
 
 public final class PostgreSQLLexer extends Lexer {

@@ -1,15 +1,14 @@
-package com.jd.auction.common.core.connection;
+package com.jd.auction.common.automatic.connection;
 
 
 
-import com.jd.auction.common.core.datasouce.NamedDataSource;
+import com.jd.auction.common.automatic.datasouce.NamedDataSource;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

@@ -1,4 +1,4 @@
-package com.jd.auction.common.core.parsing.lexer.token;
+package com.jd.auction.common.automatic.parsing.lexer.token;
 
 
 import java.util.HashMap;

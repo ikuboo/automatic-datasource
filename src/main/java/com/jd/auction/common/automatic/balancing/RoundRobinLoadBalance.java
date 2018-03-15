@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * 轮询策略
  */
-public final class RoundRobinLoadBalanceStrategy implements LoadBalanceStrategy {
+public final class RoundRobinLoadBalance implements LoadBalance {
     private static final AtomicInteger loop = new AtomicInteger();
     @Override
     public NamedDataSource getDataSource(final List<NamedDataSource> slaveDataSources) {

@@ -5,9 +5,9 @@ import com.jd.auction.common.automatic.datasouce.NamedDataSource;
 import java.util.List;
 
 /**
- * 负载均衡策略
+ * 负载均衡
  */
-public interface LoadBalanceStrategy {
+public interface LoadBalance {
     /**
      * 获取数据源
      * @param slaveDataSources slaves 数据源集合

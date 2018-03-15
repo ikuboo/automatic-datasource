@@ -1,4 +1,4 @@
-package com.jd.auction.common.core.parsing.lexer.analyzer;
+package com.jd.auction.common.automatic.parsing.lexer.analyzer;
 
 
 

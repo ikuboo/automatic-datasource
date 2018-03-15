@@ -1,7 +1,7 @@
-package com.jd.auction.common.core.parsing;
+package com.jd.auction.common.automatic.parsing;
 
 
-import com.jd.auction.common.core.constant.SQLType;
+import com.jd.auction.common.automatic.constant.SQLType;
 import org.junit.Assert;
 import org.junit.Test;
 

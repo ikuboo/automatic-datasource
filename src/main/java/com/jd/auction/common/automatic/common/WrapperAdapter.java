@@ -1,4 +1,4 @@
-package com.jd.auction.common.automatic.api;
+package com.jd.auction.common.automatic.common;
 
 import com.jd.auction.common.automatic.exception.AutomaticDatasourceException;
 

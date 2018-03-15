@@ -1,8 +1,8 @@
-package com.jd.auction.common.core.parsing.lexer.dialect.oracle;
+package com.jd.auction.common.automatic.parsing.lexer.dialect.oracle;
 
 
-import com.jd.auction.common.core.parsing.lexer.Lexer;
-import com.jd.auction.common.core.parsing.lexer.analyzer.Dictionary;
+import com.jd.auction.common.automatic.parsing.lexer.Lexer;
+import com.jd.auction.common.automatic.parsing.lexer.analyzer.Dictionary;
 
 
 public final class OracleLexer extends Lexer {

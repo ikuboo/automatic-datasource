@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
-        http://www.springframework.org/schema/util
-        http://www.springframework.org/schema/util/spring-util.xsd">
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
     <bean id="dataSource_m" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
@@ -36,23 +33,37 @@
         <property name="maxActive" value="1" />
         <property name="minIdle" value="0" />
     </bean>
-    <util:map id="slaveDataSourceMap">
-        <entry key="dataSource_s1" value-ref="dataSource_s1" />
-        <entry key="dataSource_s2" value-ref="dataSource_s2" />
-    </util:map>
-    <util:map id="configMap">
 
-    </util:map>
-    <bean id="masterSlaveRule" class="com.jd.auction.common.core.rule.MasterSlaveRule">
-        <constructor-arg name="name" value="test" />
-        <constructor-arg name="masterDataSource" ref="dataSource_m" />
-        <constructor-arg name="masterDataSourceName" value="dataSource_m" />
-        <constructor-arg name="slaveDataSourceMap" ref="slaveDataSourceMap" />
+    <bean id="masterNamedDataSource" class="com.jd.auction.common.automatic.datasouce.NamedDataSource">
+        <constructor-arg name="name" value="master"/>
+        <constructor-arg name="dataSource" ref="dataSource_m"/>
     </bean>
 
-    <bean id="autoMaticDataSource" class="com.jd.auction.common.core.datasouce.AutoMaticDataSource" >
-        <constructor-arg name="masterSlaveRule" ref="masterSlaveRule"/>
-        <constructor-arg name="configMap" ref="configMap"/>
+    <bean id="slave1NamedDataSource" class="com.jd.auction.common.automatic.datasouce.NamedDataSource">
+        <constructor-arg name="name" value="slave1"/>
+        <constructor-arg name="dataSource" ref="dataSource_s1"/>
+        <constructor-arg name="weight" value="2" />
+    </bean>
+
+    <bean id="slave2NamedDataSource" class="com.jd.auction.common.automatic.datasouce.NamedDataSource">
+        <constructor-arg name="name" value="slave2"/>
+        <constructor-arg name="dataSource" ref="dataSource_s2"/>
+        <constructor-arg name="weight" value="3" />
+    </bean>
+
+    <bean id="loadBalanceStrategy" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
+        <property name="staticField" value="com.jd.auction.common.automatic.constant.LoadBalanceStrategy.ROUND_ROBIN" />
+    </bean>
+
+    <bean id="autoMaticDataSource" class="com.jd.auction.common.automatic.datasouce.AutoMaticDataSource" init-method="init">
+        <property name="masterDataSource" ref="masterNamedDataSource" />
+        <property name="slaveDataSources">
+            <list>
+                <ref bean="slave1NamedDataSource" />
+                <ref bean="slave2NamedDataSource" />
+            </list>
+        </property>
+        <property name="loadBalanceStrategy" ref="loadBalanceStrategy" />
     </bean>
 
 </beans>

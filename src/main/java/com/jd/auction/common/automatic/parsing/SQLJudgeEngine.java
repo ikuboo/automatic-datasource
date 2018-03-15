@@ -1,14 +1,14 @@
-package com.jd.auction.common.core.parsing;
+package com.jd.auction.common.automatic.parsing;
 
 
-import com.jd.auction.common.core.constant.SQLType;
-import com.jd.auction.common.core.exception.SQLParsingException;
-import com.jd.auction.common.core.parsing.lexer.Lexer;
-import com.jd.auction.common.core.parsing.lexer.analyzer.Dictionary;
-import com.jd.auction.common.core.parsing.lexer.token.Assist;
-import com.jd.auction.common.core.parsing.lexer.token.DefaultKeyword;
-import com.jd.auction.common.core.parsing.lexer.token.Keyword;
-import com.jd.auction.common.core.parsing.lexer.token.TokenType;
+import com.jd.auction.common.automatic.constant.SQLType;
+import com.jd.auction.common.automatic.exception.SQLParsingException;
+import com.jd.auction.common.automatic.parsing.lexer.Lexer;
+import com.jd.auction.common.automatic.parsing.lexer.analyzer.Dictionary;
+import com.jd.auction.common.automatic.parsing.lexer.token.Assist;
+import com.jd.auction.common.automatic.parsing.lexer.token.DefaultKeyword;
+import com.jd.auction.common.automatic.parsing.lexer.token.Keyword;
+import com.jd.auction.common.automatic.parsing.lexer.token.TokenType;
 
 public final class SQLJudgeEngine {
     

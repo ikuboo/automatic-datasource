@@ -1,7 +1,7 @@
-package com.jd.auction.common.core.parsing.lexer.dialect.sqlserver;
+package com.jd.auction.common.automatic.parsing.lexer.dialect.sqlserver;
 
 
-import com.jd.auction.common.core.parsing.lexer.token.Keyword;
+import com.jd.auction.common.automatic.parsing.lexer.token.Keyword;
 
 
 public enum SQLServerKeyword implements Keyword {
