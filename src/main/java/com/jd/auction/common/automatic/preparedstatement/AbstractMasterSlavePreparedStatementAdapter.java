@@ -1,4 +1,4 @@
-package com.jd.auction.common.core.statement;
+package com.jd.auction.common.automatic.preparedstatement;
 
 import java.io.InputStream;
 import java.io.Reader;

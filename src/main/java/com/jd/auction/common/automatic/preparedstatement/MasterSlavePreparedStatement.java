@@ -1,11 +1,11 @@
 
 
-package com.jd.auction.common.core.statement;
+package com.jd.auction.common.automatic.preparedstatement;
 
 import com.google.common.base.Preconditions;
-import com.jd.auction.common.core.connection.MasterSlaveConnection;
-import com.jd.auction.common.core.constant.SQLType;
-import com.jd.auction.common.core.parsing.SQLJudgeEngine;
+import com.jd.auction.common.automatic.connection.MasterSlaveConnection;
+import com.jd.auction.common.automatic.constant.SQLType;
+import com.jd.auction.common.automatic.parsing.SQLJudgeEngine;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

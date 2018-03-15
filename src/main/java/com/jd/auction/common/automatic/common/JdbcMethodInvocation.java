@@ -1,6 +1,6 @@
-package com.jd.auction.common.core.api;
+package com.jd.auction.common.automatic.api;
 
-import com.jd.auction.common.core.exception.AutomaticDatasourceException;
+import com.jd.auction.common.automatic.exception.AutomaticDatasourceException;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

@@ -1,4 +1,6 @@
-package com.jd.auction.common.core.statement;
+package com.jd.auction.common.automatic.preparedstatement;
+
+import com.jd.auction.common.automatic.statement.AbstractStatementAdapter;
 
 import java.io.Reader;
 import java.sql.Array;

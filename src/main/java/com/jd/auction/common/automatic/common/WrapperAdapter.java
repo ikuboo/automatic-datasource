@@ -1,6 +1,6 @@
-package com.jd.auction.common.core.api;
+package com.jd.auction.common.automatic.api;
 
-import com.jd.auction.common.core.exception.AutomaticDatasourceException;
+import com.jd.auction.common.automatic.exception.AutomaticDatasourceException;
 
 import java.sql.SQLException;
 import java.sql.Wrapper;
@@ -51,7 +51,12 @@ public class WrapperAdapter implements Wrapper {
             each.invoke(target);
         }
     }
-    
+
+    /**
+     * 合并sql异常链
+     * @param exceptions 异常链
+     * @throws SQLException 合并后的异常
+     */
     protected void throwSQLExceptionIfNecessary(final Collection<SQLException> exceptions) throws SQLException {
         if (exceptions.isEmpty()) {
             return;
