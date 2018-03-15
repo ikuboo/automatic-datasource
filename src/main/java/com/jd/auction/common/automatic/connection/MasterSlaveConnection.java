@@ -25,7 +25,7 @@ public final class MasterSlaveConnection extends AbstractConnectionAdapter {
         this.autoMaticDataSource = autoMaticDataSource;
     }
 
-    public Connection getConnection(final SQLType sqlType) throws SQLException {
+    public NamedConnection getConnection(final SQLType sqlType) throws SQLException {
         cachedSQLType = sqlType;
         NamedDataSource namedDataSource = autoMaticDataSource.getDataSource(sqlType);
         return getCachedConnection(namedDataSource);
@@ -33,7 +33,7 @@ public final class MasterSlaveConnection extends AbstractConnectionAdapter {
     
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
-        return getConnection(null == cachedSQLType ? SQLType.DML : cachedSQLType).getMetaData();
+        return getConnection(null == cachedSQLType ? SQLType.DML : cachedSQLType).getConnection().getMetaData();
     }
     
     @Override

@@ -23,7 +23,9 @@ public class AutoMaticDataSourceTest {
 
     @Test
     public void getConnection() throws Exception {
+
         while (true) {
+            AutoMaticDataSource.userMaster();
             Connection connection = autoMaticDataSource.getConnection();
 
             Statement statement = connection.createStatement();

@@ -133,17 +133,21 @@ public abstract class AbstractConnectionAdapter extends AbstractUnsupportedOpera
     public final void setHoldability(final int holdability) throws SQLException {
     }
 
-    protected Connection getCachedConnection(NamedDataSource namedDataSource) throws SQLException {
+    protected NamedConnection getCachedConnection(NamedDataSource namedDataSource) throws SQLException {
         String dataSourceName = namedDataSource.getName();
+        NamedConnection namedConnection = new NamedConnection();
+        namedConnection.setDataSourceName(dataSourceName);
         if (cachedConnections.containsKey(dataSourceName)) {
-            return cachedConnections.get(dataSourceName);
+            namedConnection.setConnection(cachedConnections.get(dataSourceName));
+            return namedConnection;
         }
 
         Connection connection = namedDataSource.getDataSource().getConnection();
         cachedConnections.put(dataSourceName, connection);
         //回调方法
         replayMethodsInvocation(connection);
-        return connection;
+        namedConnection.setConnection(cachedConnections.get(dataSourceName));
+        return namedConnection;
     }
 
 }

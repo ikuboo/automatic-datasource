@@ -52,7 +52,7 @@
     </bean>
 
     <bean id="loadBalanceStrategy" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-        <property name="staticField" value="com.jd.auction.common.automatic.constant.LoadBalanceStrategy.ROUND_ROBIN" />
+        <property name="staticField" value="com.jd.auction.common.automatic.constant.LoadBalanceStrategy.RANDOM" />
     </bean>
 
     <bean id="autoMaticDataSource" class="com.jd.auction.common.automatic.datasouce.AutoMaticDataSource" init-method="init">
