@@ -5,6 +5,7 @@ import com.google.common.base.Preconditions;
 import com.jd.auction.common.automatic.connection.MasterSlaveConnection;
 import com.jd.auction.common.automatic.connection.NamedConnection;
 import com.jd.auction.common.automatic.constant.SQLType;
+import com.jd.auction.common.automatic.monitor.DataSourceStateJudge;
 import com.jd.auction.common.automatic.parsing.SQLJudgeEngine;
 
 import java.sql.Connection;
@@ -44,11 +45,18 @@ public final class MasterSlaveStatement extends AbstractStatementAdapter {
     @Override
     public ResultSet executeQuery(final String sql) throws SQLException {
         SQLType sqlType = new SQLJudgeEngine(sql).judgeSQLType();
+
         NamedConnection namedConnection = masterSlaveConnection.getConnection(sqlType);
         Connection connection = namedConnection.getConnection();
-        Statement statement = connection.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
-        currentStatement = statement;
-        return statement.executeQuery(sql);
+
+        try {
+            Statement statement = connection.createStatement(resultSetType, resultSetConcurrency, resultSetHoldability);
+            currentStatement = statement;
+            return statement.executeQuery(sql);
+        } catch (SQLException e) {
+            DataSourceStateJudge.judgeSQLException(namedConnection, e);
+            throw e;
+        }
     }
 
     @Override

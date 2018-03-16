@@ -33,4 +33,20 @@ public final class NamedDataSource {
     public Integer getWeight() {
         return weight;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        NamedDataSource that = (NamedDataSource) o;
+
+        return getName().equals(that.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
 }

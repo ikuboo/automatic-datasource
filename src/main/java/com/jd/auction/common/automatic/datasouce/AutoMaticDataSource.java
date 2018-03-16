@@ -4,10 +4,14 @@ import com.google.common.base.Preconditions;
 import com.jd.auction.common.automatic.balancing.LoadBalance;
 import com.jd.auction.common.automatic.balancing.WeightRobinLoadBalance;
 import com.jd.auction.common.automatic.connection.MasterSlaveConnection;
+import com.jd.auction.common.automatic.connection.NamedConnection;
 import com.jd.auction.common.automatic.constant.LoadBalanceStrategy;
 import com.jd.auction.common.automatic.constant.SQLType;
+import com.jd.auction.common.automatic.monitor.DataSourceHeartBeat;
 import com.jd.auction.common.automatic.monitor.DataSourceState;
 import com.jd.auction.common.automatic.monitor.DataSourceStateJudge;
+import com.jd.auction.common.automatic.monitor.statuslisten.DefStatusChangeListen;
+import com.jd.auction.common.automatic.monitor.statuslisten.StatusChangeListen;
 import com.jd.auction.common.automatic.utils.StringUtils;
 
 import javax.sql.DataSource;
@@ -16,6 +20,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 自动数据源
@@ -30,6 +35,10 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
     private LoadBalanceStrategy loadBalanceStrategy;
     //重试次数，默认为3
     private Integer retry = 3;
+    //心跳间隔秒
+    private Integer heartBeatPeriod = 1;
+    private StatusChangeListen  statusChangeListen  = new DefStatusChangeListen();
+
 
     private static final ThreadLocal<Boolean> USER_MASTER_FLAG = new ThreadLocal<Boolean>() {
         @Override
@@ -39,19 +48,26 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
     };
 
     public NamedDataSource getDataSource(final SQLType sqlType) {
+
+        if(null == slaveDataSources || 0 == slaveDataSources.size()){
+            return masterDataSource;
+        }
+
         if (isMasterRoute(sqlType)) {
             USER_MASTER_FLAG.set(true);
             return masterDataSource;
         }
+
         NamedDataSource selectedSource = loadBalanceStrategy == null ?
-                LoadBalanceStrategy.getDefaultLoadBalance().getDataSource(slaveDataSources) :
-                loadBalanceStrategy.getLoadBalance().getDataSource(slaveDataSources);
-        Preconditions.checkNotNull(selectedSource,"selectedSource is null");
+                LoadBalanceStrategy.getDefaultLoadBalance().getDataSource(masterDataSource, slaveDataSources) :
+                loadBalanceStrategy.getLoadBalance().getDataSource(masterDataSource, slaveDataSources);
+
+        Preconditions.checkArgument(selectedSource != null ,"无可用的slave数据源");
         return selectedSource;
     }
 
     private boolean isMasterRoute(final SQLType sqlType) {
-        return SQLType.DQL != sqlType || USER_MASTER_FLAG.get() ;
+        return SQLType.DQL != sqlType || USER_MASTER_FLAG.get();
     }
 
     @Override
@@ -74,7 +90,8 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
         //TODO 校验回头在做
 
         //初始化数据源状态
-        DataSourceStateJudge.init(getAllDataSource(), retry);
+        DataSourceStateJudge.init(getAllDataSource(), retry, statusChangeListen);
+        DataSourceHeartBeat.init(heartBeatPeriod);
 
     }
 

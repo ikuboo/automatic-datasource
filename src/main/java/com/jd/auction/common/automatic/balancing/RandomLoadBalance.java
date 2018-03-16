@@ -10,7 +10,7 @@ import java.util.Random;
  */
 public final class RandomLoadBalance implements LoadBalance {
     @Override
-    public NamedDataSource getDataSource(final List<NamedDataSource> slaveDataSources) {
+    public NamedDataSource getDataSource(final NamedDataSource masterDataSource,final List<NamedDataSource> slaveDataSources) {
         return slaveDataSources.get(new Random().nextInt(slaveDataSources.size()));
     }
 }

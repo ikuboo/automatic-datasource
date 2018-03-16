@@ -21,7 +21,7 @@ public class WeightRobinLoadBalance implements LoadBalance {
 
 
     @Override
-    public NamedDataSource getDataSource(final List<NamedDataSource> slaveDataSources) {
+    public NamedDataSource getDataSource(final NamedDataSource masterDataSource,final List<NamedDataSource> slaveDataSources) {
         init(slaveDataSources);
         loop.compareAndSet(switchNamedDataSources.size(), 0);
         return switchNamedDataSources.get(loop.getAndIncrement() % switchNamedDataSources.size());

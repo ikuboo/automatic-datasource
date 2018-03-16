@@ -6,7 +6,7 @@ import org.junit.Test;
 public class DataSourceHeartBeatTest {
     @Test
     public void init() throws Exception {
-        DataSourceHeartBeat.init(10);
+        DataSourceHeartBeat.init(2);
         Thread.sleep(100000000000L);
     }
 
