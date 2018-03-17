@@ -9,10 +9,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring.xml"})
@@ -30,13 +27,13 @@ public class AutoMaticDataSourceTest {
 
         for (int i = 0; i < 1000; i++) {
             Connection connection = null;
-            Statement statement = null;
+            PreparedStatement preparedStatement = null;
             ResultSet resultSet = null;
 
             try{
                 connection = autoMaticDataSource.getConnection();
-                statement = connection.createStatement();
-                resultSet = statement.executeQuery("select * from t_user where id = 1");
+                preparedStatement = connection.prepareStatement("select * from t_user where id = 1");
+                resultSet = preparedStatement.executeQuery();
 
                 while (resultSet.next()) {
                     long id = resultSet.getLong("id");
@@ -49,8 +46,8 @@ public class AutoMaticDataSourceTest {
                 try{
                     if(resultSet != null)
                         resultSet.close();
-                    if(statement != null)
-                        statement.close();
+                    if(preparedStatement != null)
+                        preparedStatement.close();
                     if(connection != null){
                         connection.close();
                     }

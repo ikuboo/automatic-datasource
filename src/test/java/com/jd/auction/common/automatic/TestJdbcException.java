@@ -7,10 +7,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * 测试数据源出错抛出的异常
@@ -40,7 +37,8 @@ public class TestJdbcException {
                     long id = resultSet.getLong("id");
                     String name = resultSet.getString("name");
                     System.out.println(String.format("id={%d},name={%s}", id, name));
-                }                resultSet.close();
+                }
+                resultSet.close();
                 statement.close();
                 connection.close();
             } catch (SQLException e) {
@@ -48,6 +46,29 @@ public class TestJdbcException {
             }
 
             Thread.sleep(1000);
+        }
+    }
+
+    @Test
+    public void preparedStatementExceptionTest(){
+
+        while (true){
+            try {
+                Connection connection = m_datasource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement("select * from t_user where id = 1");
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    long id = resultSet.getLong("id");
+                    String name = resultSet.getString("name");
+                    System.out.println(String.format("id={%d},name={%s}", id, name));
+                }
+                resultSet.close();
+                preparedStatement.close();
+                connection.close();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
