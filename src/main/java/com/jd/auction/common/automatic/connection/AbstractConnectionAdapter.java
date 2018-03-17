@@ -3,6 +3,7 @@ package com.jd.auction.common.automatic.connection;
 
 
 import com.jd.auction.common.automatic.datasouce.NamedDataSource;
+import com.jd.auction.common.automatic.monitor.DataSourceStateJudge;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -142,6 +143,7 @@ public abstract class AbstractConnectionAdapter extends AbstractUnsupportedOpera
         try{
             connection = namedDataSource.getDataSource().getConnection();
         }catch (SQLException e){
+            DataSourceStateJudge.judgeSQLException(new NamedConnection(null, namedDataSource, namedDataSource.getName()), e);
             throw e;
         }
 

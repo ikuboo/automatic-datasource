@@ -1,6 +1,5 @@
 package com.jd.auction.common.automatic;
 
-import com.jd.auction.common.automatic.datasouce.AutoMaticDataSource;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;

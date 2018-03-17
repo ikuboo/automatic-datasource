@@ -9,15 +9,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
-import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 
 /**
  * 数据源心跳
@@ -30,7 +24,8 @@ public class DataSourceHeartBeat {
     }
 
     private static final Logger logger = LoggerFactory.getLogger(DataSourceHeartBeat.class);
-    private static ScheduledExecutorService executorService;
+    private static ScheduledExecutorService scheduledExecutorService;
+    private static ExecutorService executorService;
 
     /**
      * 初始化
@@ -40,9 +35,15 @@ public class DataSourceHeartBeat {
     public static void init(Integer heartBeatPeriod) {
         Preconditions.checkNotNull(heartBeatPeriod);
         Preconditions.checkArgument(heartBeatPeriod > 0, "heartBeatPeriod mast > 0");
-        executorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setDaemon(false).setNameFormat("automatic-datasource-heartbeat-%d").build());
 
-        executorService.scheduleWithFixedDelay(new HeartBeadTask(), 10, heartBeatPeriod, TimeUnit.SECONDS);
+        //数据源心跳线程池
+        executorService = Executors.newFixedThreadPool(5, new ThreadFactoryBuilder().setDaemon(false)
+                .setNameFormat("automatic-datasource-heartbeat-%d").build());
+        //检查故障数据源的定时任务线程池
+        scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setDaemon(false)
+                .setNameFormat("automatic-datasource-statuscheck-%d").build());
+
+        scheduledExecutorService.scheduleWithFixedDelay(new ValidateDataSourceTask(executorService), 10, heartBeatPeriod, TimeUnit.SECONDS);
     }
 
     public static void destory() {
@@ -50,11 +51,19 @@ public class DataSourceHeartBeat {
             //关闭线程池
             executorService.shutdownNow();
         }
+        if(null != scheduledExecutorService){
+            scheduledExecutorService.shutdownNow();
+        }
     }
 }
 
-class HeartBeadTask implements Runnable {
-    private static final Logger logger = LoggerFactory.getLogger(HeartBeadTask.class);
+class ValidateDataSourceTask implements Runnable {
+    private static final Logger logger = LoggerFactory.getLogger(ValidateDataSourceTask.class);
+    private final ExecutorService executorService;
+
+    public ValidateDataSourceTask(final ExecutorService executorService) {
+        this.executorService = executorService;
+    }
 
     @Override
     public void run() {
@@ -64,43 +73,43 @@ class HeartBeadTask implements Runnable {
         }
 
         for (NamedDataSource namedDataSource : unAvailableDataSource) {
-            logger.error("心跳数据源:" + namedDataSource.getName());
-            FutureTask<Boolean> futureTask = new FutureTask<Boolean>(new MyCallAble(namedDataSource));
-            new Thread(futureTask).start();
+            Future<Boolean> validateCall = executorService.submit(new HeartBeatCallAble(executorService, namedDataSource));
             try {
-                Boolean aBoolean = futureTask.get(5, TimeUnit.SECONDS);
-                if (aBoolean) {
+                Boolean validateResult = validateCall.get(3, TimeUnit.SECONDS);
+                if (validateResult) {
                     DataSourceStateJudge.changeToAvailable(namedDataSource);
                 }
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                logger.error("0--------------------------------------------------------------超时");
+                logger.debug(String.format("心跳数据源[%s]超时!threadName=[%s]",namedDataSource.getName(), Thread.currentThread().getName()));
             }
         }
     }
 }
 
 
-class MyCallAble implements Callable<Boolean> {
+class HeartBeatCallAble implements Callable<Boolean>{
+    private final ExecutorService executorService;
     private final NamedDataSource namedDataSource;
-
-    public MyCallAble(final NamedDataSource namedDataSource) {
+    private static final Logger logger = LoggerFactory.getLogger(HeartBeatCallAble.class);
+    public HeartBeatCallAble(final ExecutorService executorService, final NamedDataSource namedDataSource) {
+        this.executorService = executorService;
         this.namedDataSource = namedDataSource;
     }
 
     @Override
     public Boolean call() throws Exception {
-        DataSource dataSource = namedDataSource.getDataSource();
-        if (dataSource instanceof DruidDataSource) {
-            DruidDataSource druidDataSource = (DruidDataSource) dataSource;
-        } else {
-            try {
-                Connection connection = dataSource.getConnection();
-                connection.createStatement().executeQuery("select 1");
-            } catch (SQLException e) {
-                return false;
-            }
+        try {
+            Connection connection = namedDataSource.getDataSource().getConnection();
+            Statement statement = connection.createStatement();
+            statement.executeQuery("select 1");
+            statement.close();
+            connection.close();
+
+            logger.debug(String.format("心跳数据源[%s]成功!threadName=[%s] ", namedDataSource.getName(), Thread.currentThread().getName()));
             return true;
+        } catch (Exception e) {
+            logger.debug(String.format("心跳数据源[%s]失败 !threadName=[%s] ", namedDataSource.getName(), Thread.currentThread().getName()));
+            return false;
         }
-        return true;
     }
 }

@@ -10,12 +10,13 @@ import java.sql.Connection;
  */
 public class NamedConnection {
     private  final Connection connection;
-    private  final NamedDataSource NamedDataSource;
+    private  final NamedDataSource namedDataSource;
     private  final String  dataSourceName;
+
 
     public NamedConnection(Connection connection, com.jd.auction.common.automatic.datasouce.NamedDataSource namedDataSource, String dataSourceName) {
         this.connection = connection;
-        NamedDataSource = namedDataSource;
+        this.namedDataSource = namedDataSource;
         this.dataSourceName = dataSourceName;
     }
 
@@ -24,7 +25,7 @@ public class NamedConnection {
     }
 
     public com.jd.auction.common.automatic.datasouce.NamedDataSource getNamedDataSource() {
-        return NamedDataSource;
+        return namedDataSource;
     }
 
     public String getDataSourceName() {

@@ -35,8 +35,7 @@ public class DataSourceState {
     }
 
     /**
-     * 设置数据源为可用
-     * @return
+     * 设置数据源为可
      */
     public synchronized boolean changeToAvailable() {
         if (state == State.Available) {

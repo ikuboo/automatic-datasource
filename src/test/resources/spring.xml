@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
-    <bean id="dataSource_m" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+    <bean id="dataSource_m" class="com.alibaba.druid.pool.DruidDataSource" >
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://ikuboo:3401/dbautoswitch" />
         <property name="username" value="root" />
@@ -14,7 +14,7 @@
         <property name="minIdle" value="0" />
     </bean>
 
-    <bean id="dataSource_s1" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+    <bean id="dataSource_s1" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://ikuboo:3402/dbautoswitch" />
         <property name="username" value="root" />
@@ -24,7 +24,7 @@
         <property name="minIdle" value="0" />
     </bean>
 
-    <bean id="dataSource_s2" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+    <bean id="dataSource_s2" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://ikuboo:3403/dbautoswitch" />
         <property name="username" value="root" />

@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -25,30 +26,46 @@ public class AutoMaticDataSourceTest {
     private DataSource m_datasource;
 
     @Test
-    public void getConnection() throws Exception {
+    public void getConnection() {
 
-        Connection connection = autoMaticDataSource.getConnection();
         for (int i = 0; i < 1000; i++) {
+            Connection connection = null;
+            Statement statement = null;
+            ResultSet resultSet = null;
+
             try{
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery("select * from t_user where id = 1");
+                connection = autoMaticDataSource.getConnection();
+                statement = connection.createStatement();
+                resultSet = statement.executeQuery("select * from t_user where id = 1");
 
                 while (resultSet.next()) {
                     long id = resultSet.getLong("id");
                     String name = resultSet.getString("name");
-                    logger.info(String.format("----------------------------------------------------------------------------------id=[%s],name=[%s]", id, name));
+                    logger.info(String.format("------------------id=[%s],name=[%s]", id, name));
                 }
-
-                resultSet.close();
-                statement.close();
-
-
-                Thread.sleep(1000);
             }catch (Exception e){
-                logger.info(String.format("----------------------------------------------------------------------------------访问异常"));
+                logger.info(String.format("-----------------------访问异常"));
+            }finally {
+                try{
+                    if(resultSet != null)
+                        resultSet.close();
+                    if(statement != null)
+                        statement.close();
+                    if(connection != null){
+                        connection.close();
+                    }
+                }catch (Exception e){
+                    logger.info(String.format("-----------------------关闭异常"));
+                }
+            }
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-        connection.close();
+
     }
 
     @Test
