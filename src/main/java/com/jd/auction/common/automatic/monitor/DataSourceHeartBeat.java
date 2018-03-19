@@ -85,6 +85,7 @@ class ValidateDataSourceTask implements Runnable {
                     DataSourceStateJudge.changeToAvailable(namedDataSource);
                 }
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                //TODO 超时时候想办法中断HeartBeatCallAble的线程
                 logger.debug(String.format("心跳数据源[%s]超时!threadName=[%s]",namedDataSource.getName(), Thread.currentThread().getName()));
             }
         }
