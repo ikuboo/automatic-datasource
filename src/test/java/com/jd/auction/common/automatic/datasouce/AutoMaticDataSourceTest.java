@@ -52,7 +52,6 @@ public class AutoMaticDataSourceTest {
                         connection.close();
                     }
                 }catch (Exception e){
-                    logger.info(String.format("-----------------------关闭异常"));
                 }
             }
 

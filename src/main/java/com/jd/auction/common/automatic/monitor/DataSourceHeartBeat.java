@@ -1,17 +1,22 @@
 package com.jd.auction.common.automatic.monitor;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.jd.auction.common.automatic.datasouce.NamedDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * 数据源心跳
@@ -104,7 +109,6 @@ class HeartBeatCallAble implements Callable<Boolean>{
             statement.executeQuery("select 1");
             statement.close();
             connection.close();
-
             logger.debug(String.format("心跳数据源[%s]成功!threadName=[%s] ", namedDataSource.getName(), Thread.currentThread().getName()));
             return true;
         } catch (Exception e) {
