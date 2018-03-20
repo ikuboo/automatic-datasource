@@ -1,26 +1,20 @@
 package com.jd.auction.common.automatic.datasouce;
 
 import com.google.common.base.Preconditions;
-import com.jd.auction.common.automatic.balancing.LoadBalance;
-import com.jd.auction.common.automatic.balancing.WeightRobinLoadBalance;
 import com.jd.auction.common.automatic.connection.MasterSlaveConnection;
-import com.jd.auction.common.automatic.connection.NamedConnection;
 import com.jd.auction.common.automatic.constant.LoadBalanceStrategy;
 import com.jd.auction.common.automatic.constant.SQLType;
 import com.jd.auction.common.automatic.monitor.DataSourceHeartBeat;
-import com.jd.auction.common.automatic.monitor.DataSourceState;
 import com.jd.auction.common.automatic.monitor.DataSourceStateJudge;
 import com.jd.auction.common.automatic.monitor.statuslisten.DefStatusChangeListen;
 import com.jd.auction.common.automatic.monitor.statuslisten.StatusChangeListen;
-import com.jd.auction.common.automatic.utils.StringUtils;
+import com.jd.auction.common.automatic.utils.NamedDatasourceUtils;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * 自动数据源
@@ -34,10 +28,18 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
     private List<NamedDataSource> slaveDataSources;
     private LoadBalanceStrategy loadBalanceStrategy;
     //重试次数，默认为3
-    private Integer retry = 3;
+    private int retry = 3;
     //心跳间隔秒
-    private Integer heartBeatPeriod = 1;
+    private int heartBeatPeriod = 1;
+    //数据源状态变更监听器
     private StatusChangeListen  statusChangeListen  = new DefStatusChangeListen();
+    //数据源异常抛出的异常
+    private String exceptionString ="com.mysql.jdbc.exceptions.jdbc4.MySQLNonTransientConnectionException," +
+            "com.mysql.jdbc.exceptions.jdbc4.CommunicationsException," +
+            "com.alibaba.druid.pool.GetConnectionTimeoutException";
+    private boolean isInit = false;
+
+    private ReentrantLock lock = new ReentrantLock();
 
 
     private static final ThreadLocal<Boolean> USER_MASTER_FLAG = new ThreadLocal<Boolean>() {
@@ -48,10 +50,6 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
     };
 
     public NamedDataSource getDataSource(final SQLType sqlType) {
-
-        if(null == slaveDataSources || 0 == slaveDataSources.size()){
-            return masterDataSource;
-        }
 
         if (isMasterRoute(sqlType)) {
             USER_MASTER_FLAG.set(true);
@@ -72,6 +70,7 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
 
     @Override
     public Connection getConnection() throws SQLException {
+        init();
         return new MasterSlaveConnection(this);
     }
 
@@ -79,20 +78,51 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
      * 初始化连接池
      */
     public void init(){
-        Preconditions.checkNotNull(masterDataSource,"masterDataSource is null");
-        Preconditions.checkNotNull(slaveDataSources,"slaveDataSources is null");
-
-        if(StringUtils.isEmpty(masterDataSource.getName())){
-            throw new IllegalArgumentException("masterDataSource.name is empty");
+        if(isInit){
+            return;
         }
 
-        Preconditions.checkNotNull(masterDataSource.getDataSource(), "masterDataSource.datasouce is null");
-        //TODO 校验回头在做
+        lock.lock();
+        try{
+            if(isInit){
+                return;
+            }
 
-        //初始化数据源状态
-        DataSourceStateJudge.init(getAllDataSource(), retry, statusChangeListen);
-        DataSourceHeartBeat.init(heartBeatPeriod);
+            Preconditions.checkNotNull(masterDataSource,"masterDataSource is null");
+            Preconditions.checkArgument(masterDataSource.getName() != null && masterDataSource.getName().length() > 0, "masterDataSource.name is empty");
+            Preconditions.checkNotNull(masterDataSource.getDataSource(), "masterDataSource.datasouce is null");
 
+            Preconditions.checkNotNull(slaveDataSources, "slaveDataSources is null");
+            Preconditions.checkArgument(slaveDataSources.size() > 0 ,"slaveDataSources mast > 0");
+
+            for(NamedDataSource namedDataSource : slaveDataSources){
+                Preconditions.checkArgument(namedDataSource.getName() != null && namedDataSource.getName().length() > 0, "slaveDataSources.name is empty");
+                Preconditions.checkNotNull(namedDataSource.getDataSource(), "slaveDataSources.datasource is null");
+                Preconditions.checkNotNull(namedDataSource.getWeight(),"slaveDataSources.weigth is null");
+                Preconditions.checkArgument(namedDataSource.getWeight() > 0 && namedDataSource.getWeight() <= 100, "slaveDataSources.weigth must > 0 && < 100");
+            }
+
+            Preconditions.checkArgument(NamedDatasourceUtils.checkDataSourceName(masterDataSource, slaveDataSources), "has same datasource name");
+
+            Preconditions.checkArgument(retry > 0, "retry must > 0");
+            Preconditions.checkArgument(heartBeatPeriod > 0, "heartBeatPeriod must > 0");
+            Preconditions.checkArgument(exceptionString != null && exceptionString.length() > 0,"exceptionString is empty");
+
+            //初始化异常类型
+            String[] exceptionArrays = exceptionString.split(",");
+            List<String> exceptions = new ArrayList<>(exceptionArrays.length);
+            for(String exceptionArray : exceptionArrays){
+                exceptions.add(exceptionArray);
+            }
+
+            //初始化数据源状态
+            DataSourceStateJudge.init(getAllDataSource(), retry, statusChangeListen, exceptions);
+            //初始化心跳线程池
+            DataSourceHeartBeat.init(heartBeatPeriod);
+            isInit = true;
+        }finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -100,6 +130,8 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
      */
     public void destory(){
         USER_MASTER_FLAG.remove();
+        DataSourceHeartBeat.destory();
+
     }
 
     public static void resetMasterFlag() {
@@ -119,6 +151,9 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
         return allDataSource;
     }
 
+
+
+    /*-------------get/set------------ method*/
     public void setMasterDataSource(NamedDataSource masterDataSource) {
         this.masterDataSource = masterDataSource;
     }
@@ -129,5 +164,21 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
 
     public void setLoadBalanceStrategy(LoadBalanceStrategy loadBalanceStrategy) {
         this.loadBalanceStrategy = loadBalanceStrategy;
+    }
+
+    public void setRetry(int retry) {
+        this.retry = retry;
+    }
+
+    public void setHeartBeatPeriod(int heartBeatPeriod) {
+        this.heartBeatPeriod = heartBeatPeriod;
+    }
+
+    public void setStatusChangeListen(StatusChangeListen statusChangeListen) {
+        this.statusChangeListen = statusChangeListen;
+    }
+
+    public void setExceptionString(String exceptionString) {
+        this.exceptionString = exceptionString;
     }
 }

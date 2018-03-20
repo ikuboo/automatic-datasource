@@ -38,10 +38,10 @@ public class AutoMaticDataSourceTest {
                 while (resultSet.next()) {
                     long id = resultSet.getLong("id");
                     String name = resultSet.getString("name");
-                    logger.info(String.format("------------------id=[%s],name=[%s]", id, name));
+                    logger.info(String.format("id=[%s],name=[%s]", id, name));
                 }
             }catch (Exception e){
-                logger.info(String.format("-----------------------访问异常"));
+                logger.info(String.format("访问异常:" + e.getClass()));
             }finally {
                 try{
                     if(resultSet != null)

@@ -22,6 +22,7 @@ public final class DataSourceStateJudge {
 
     //数据源状态变更监听器
     private static StatusChangeListen statusChangeListen;
+    private static final List<String> exceptionNames = new ArrayList<>();
 
 
     private DataSourceStateJudge() {
@@ -36,11 +37,14 @@ public final class DataSourceStateJudge {
      * 初始化所有数据源的状态
      * 默认为可用
      */
-    public static void init(final List<NamedDataSource> allDataSources, final Integer retry, final StatusChangeListen statusChangeListen) {
+    public static void init(final List<NamedDataSource> allDataSources, final Integer retry,
+                            final StatusChangeListen statusChangeListen,final List<String> exceptionNames) {
         DataSourceStateJudge.statusChangeListen = statusChangeListen;
         for (NamedDataSource namedDataSource : allDataSources) {
             dataSourceStatus.put(namedDataSource, new DataSourceState(retry));
         }
+        Preconditions.checkArgument(exceptionNames.size() > 0, "exceptionNames.size mast > 0");
+        DataSourceStateJudge.exceptionNames.addAll(exceptionNames);
     }
 
     /**
@@ -49,16 +53,32 @@ public final class DataSourceStateJudge {
     public static void judgeSQLException(final NamedConnection namedConnection, SQLException e) {
         //com.mysql.jdbc.exceptions.jdbc4.MySQLNonTransientConnectionException
         //com.mysql.jdbc.exceptions.jdbc4.CommunicationsException
+
         Preconditions.checkNotNull(namedConnection);
         Preconditions.checkNotNull(namedConnection.getNamedDataSource());
+
+        String eName = e.getClass().getName();
+        String eCause = e.getCause() == null ? null : e.getCause().getClass().getName();
+        //判断抛出的异常是否为连接故障的exception
+        boolean flag = false;
+        for(String exceptionName : exceptionNames){
+            if(exceptionName.equals(eName) || exceptionName.equals(eCause)){
+                flag = true;
+                break;
+            }
+        }
+
+        if(!flag){
+            return;
+        }
+
         NamedDataSource namedDataSource = namedConnection.getNamedDataSource();
         DataSourceState dataSourceState = dataSourceStatus.get(namedDataSource);
-
+        //修改数据源为不可用的
         boolean b = dataSourceState.changeToUnavailable();
         if (b) {
             statusChangeListen.changeToUnavailable(namedDataSource);
         }
-
     }
 
 

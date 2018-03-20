@@ -35,7 +35,7 @@ public enum LoadBalanceStrategy {
      * @return 权重轮询策略
      */
     public static LoadBalance getDefaultLoadBalance() {
-        return WEIGHT_ROBIN.getLoadBalance();
+        return ROUND_ROBIN.getLoadBalance();
     }
 
     public LoadBalance getLoadBalance() {

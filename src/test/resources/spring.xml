@@ -12,9 +12,10 @@
         <property name="initialSize" value="0" />
         <property name="maxActive" value="1" />
         <property name="minIdle" value="0" />
+        <property name="maxWait" value="1000" />
     </bean>
 
-    <bean id="dataSource_s1" class="org.apache.commons.dbcp.BasicDataSource">
+    <bean id="dataSource_s1" class="com.alibaba.druid.pool.DruidDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://ikuboo:3402/dbautoswitch" />
         <property name="username" value="root" />
@@ -22,13 +23,15 @@
         <property name="initialSize" value="0" />
         <property name="maxActive" value="10" />
         <property name="minIdle" value="0" />
+        <property name="maxWait" value="1000" />
     </bean>
 
-    <bean id="dataSource_s2" class="org.apache.commons.dbcp.BasicDataSource">
+    <bean id="dataSource_s2" class="com.alibaba.druid.pool.DruidDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://ikuboo:3403/dbautoswitch" />
         <property name="username" value="root" />
         <property name="password" value="root" />
+        <property name="maxWait" value="1000" />
         <property name="initialSize" value="0" />
         <property name="maxActive" value="1" />
         <property name="minIdle" value="0" />
@@ -55,7 +58,7 @@
         <property name="staticField" value="com.jd.auction.common.automatic.constant.LoadBalanceStrategy.WEIGHT_ROBIN" />
     </bean>
 
-    <bean id="autoMaticDataSource" class="com.jd.auction.common.automatic.datasouce.AutoMaticDataSource" init-method="init">
+    <bean id="autoMaticDataSource" class="com.jd.auction.common.automatic.datasouce.AutoMaticDataSource">
         <property name="masterDataSource" ref="masterNamedDataSource" />
         <property name="slaveDataSources">
             <list>

@@ -29,7 +29,7 @@ public class TestJdbcException {
 
         while (true) {
             try {
-                Connection connection = dbcp_m.getConnection();
+                Connection connection = m_datasource.getConnection();
                 Statement statement = connection.createStatement();
 
                 ResultSet resultSet = statement.executeQuery("select * from t_user where id = 1");
@@ -41,8 +41,10 @@ public class TestJdbcException {
                 resultSet.close();
                 statement.close();
                 connection.close();
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (Throwable e) {
+                String name = e.getClass().getName();
+                String nameCauser = e.getCause() == null ? null : e.getCause().getClass().getName();
+                System.out.println("TestJdbcException.error:" + name + ";" + nameCauser);
             }
 
             Thread.sleep(1000);
