@@ -12,7 +12,6 @@
     <properties>
         <junit.version>4.12</junit.version>
         <guava.version>18.0</guava.version>
-
         <spring.version>4.3.3.RELEASE</spring.version>
         <mybatis.version>3.2.6</mybatis.version>
         <slf4j.version>1.6.1</slf4j.version>
@@ -175,6 +174,7 @@
                 <configuration>
                     <source>${java.version}</source>
                     <target>${java.version}</target>
+                    <encoding>utf8</encoding>
                 </configuration>
             </plugin>
 
