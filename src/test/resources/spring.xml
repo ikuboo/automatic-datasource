@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
-    <bean id="dataSource_m" class="com.alibaba.druid.pool.DruidDataSource" >
+    <bean id="dataSource_m" class="org.apache.commons.dbcp.BasicDataSource" >
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://ikuboo:3401/dbautoswitch" />
         <property name="username" value="root" />
@@ -15,7 +15,7 @@
         <property name="maxWait" value="1000" />
     </bean>
 
-    <bean id="dataSource_s1" class="com.alibaba.druid.pool.DruidDataSource">
+    <bean id="dataSource_s1" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://ikuboo:3402/dbautoswitch" />
         <property name="username" value="root" />
@@ -26,7 +26,7 @@
         <property name="maxWait" value="1000" />
     </bean>
 
-    <bean id="dataSource_s2" class="com.alibaba.druid.pool.DruidDataSource">
+    <bean id="dataSource_s2" class="org.apache.commons.dbcp.BasicDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver" />
         <property name="url" value="jdbc:mysql://ikuboo:3403/dbautoswitch" />
         <property name="username" value="root" />
@@ -55,7 +55,7 @@
     </bean>
 
     <bean id="loadBalanceStrategy" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean">
-        <property name="staticField" value="com.jd.auction.common.automatic.constant.LoadBalanceStrategy.WEIGHT_ROBIN" />
+        <property name="staticField" value="com.jd.auction.common.automatic.constant.LoadBalanceStrategy.RANDOM" />
     </bean>
 
     <bean id="autoMaticDataSource" class="com.jd.auction.common.automatic.datasouce.AutoMaticDataSource">
