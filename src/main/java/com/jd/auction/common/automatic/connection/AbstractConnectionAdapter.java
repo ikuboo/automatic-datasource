@@ -153,4 +153,8 @@ public abstract class AbstractConnectionAdapter extends AbstractUnsupportedOpera
         return new NamedConnection(cachedConnections.get(dataSourceName), namedDataSource, dataSourceName);
     }
 
+
+    public Map<String, Connection> getCachedConnections() {
+        return cachedConnections;
+    }
 }

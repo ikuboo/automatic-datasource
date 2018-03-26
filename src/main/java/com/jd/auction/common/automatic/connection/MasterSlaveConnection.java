@@ -9,7 +9,6 @@ import com.jd.auction.common.automatic.datasouce.NamedDataSource;
 import com.jd.auction.common.automatic.preparedstatement.MasterSlavePreparedStatement;
 import com.jd.auction.common.automatic.statement.MasterSlaveStatement;
 
-import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -33,6 +32,9 @@ public final class MasterSlaveConnection extends AbstractConnectionAdapter {
     
     @Override
     public DatabaseMetaData getMetaData() throws SQLException {
+        if (!getCachedConnections().isEmpty()) {
+            return getCachedConnections().values().iterator().next().getMetaData();
+        }
         return getConnection(null == cachedSQLType ? SQLType.DML : cachedSQLType).getConnection().getMetaData();
     }
     
