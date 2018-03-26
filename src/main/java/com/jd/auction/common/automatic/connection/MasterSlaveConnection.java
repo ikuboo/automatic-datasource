@@ -85,7 +85,7 @@ public final class MasterSlaveConnection extends AbstractConnectionAdapter {
     
     @Override
     public void close() throws SQLException {
-        //AutoMaticDataSource.resetMasterFlag();
+        AutoMaticDataSource.resetMasterFlag();
         super.close();
     }
 }
