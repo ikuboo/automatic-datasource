@@ -63,7 +63,7 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
                 loadBalanceStrategy.getLoadBalance().getDataSource(masterDataSource, slaveDataSources);
 
         Preconditions.checkArgument(selectedSource != null ,"无可用的slave数据源");
-        logger.debug("当前使用数据源:{}", selectedSource.getName());
+        logger.debug("当前使用Slave数据源:{}", selectedSource.getName());
         return selectedSource;
     }
 
