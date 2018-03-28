@@ -9,6 +9,8 @@ import com.jd.auction.common.automatic.monitor.DataSourceStateJudge;
 import com.jd.auction.common.automatic.monitor.statuslisten.DefStatusChangeListen;
 import com.jd.auction.common.automatic.monitor.statuslisten.StatusChangeListen;
 import com.jd.auction.common.automatic.utils.NamedDatasourceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -22,7 +24,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 
 public class AutoMaticDataSource extends AbstractDataSourceAdapter {
-
+    private static final Logger logger = LoggerFactory.getLogger(AutoMaticDataSource.class);
 
     private NamedDataSource masterDataSource;
     private List<NamedDataSource> slaveDataSources;
@@ -61,6 +63,7 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
                 loadBalanceStrategy.getLoadBalance().getDataSource(masterDataSource, slaveDataSources);
 
         Preconditions.checkArgument(selectedSource != null ,"无可用的slave数据源");
+        logger.debug("当前使用数据源:{}", selectedSource.getName());
         return selectedSource;
     }
 
@@ -153,7 +156,7 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
 
 
 
-    /*-------------get/set------------ method*/
+    /*-------------get/set------------ method-----------*/
     public void setMasterDataSource(NamedDataSource masterDataSource) {
         this.masterDataSource = masterDataSource;
     }

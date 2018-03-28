@@ -47,7 +47,7 @@ public class DataSourceHeartBeat {
         //检查故障数据源的定时任务线程池
         scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().setDaemon(false)
                 .setNameFormat("automatic-datasource-statuscheck-%d").build());
-
+        //延迟10秒开始执行
         scheduledExecutorService.scheduleWithFixedDelay(new ValidateDataSourceTask(executorService), 10, heartBeatPeriod, TimeUnit.SECONDS);
     }
 
@@ -80,11 +80,12 @@ class ValidateDataSourceTask implements Runnable {
         for (NamedDataSource namedDataSource : unAvailableDataSource) {
             Future<Boolean> validateCall = executorService.submit(new HeartBeatCallAble(executorService, namedDataSource));
             try {
-                Boolean validateResult = validateCall.get(3, TimeUnit.SECONDS);
+                Boolean validateResult = validateCall.get(5, TimeUnit.SECONDS);
                 if (validateResult) {
                     DataSourceStateJudge.changeToAvailable(namedDataSource);
                 }
             } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                //TODO 超时中止线程
                 logger.debug(String.format("心跳数据源[%s]超时!threadName=[%s]",namedDataSource.getName(), Thread.currentThread().getName()));
             }
         }

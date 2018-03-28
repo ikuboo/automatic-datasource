@@ -8,6 +8,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 数据源状态
  */
 public class DataSourceState {
+    //重试次数
     private final Integer retry;
     private final AtomicInteger fails = new AtomicInteger();
     private State state = State.Available;

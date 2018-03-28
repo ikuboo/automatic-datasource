@@ -11,9 +11,9 @@ public interface StatusChangeListen {
     /**
      * 数据源变为可用
      */
-    void changeToAvailable(NamedDataSource namedDataSource);
+    void changeToAvailable(final NamedDataSource namedDataSource);
     /**
      * 数据源变为不可用
      */
-    void changeToUnavailable(NamedDataSource namedDataSource);
+    void changeToUnavailable(final NamedDataSource namedDataSource);
 }

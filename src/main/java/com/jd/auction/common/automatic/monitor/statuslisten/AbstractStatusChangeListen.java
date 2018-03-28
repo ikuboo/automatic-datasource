@@ -8,12 +8,12 @@ import com.jd.auction.common.automatic.datasouce.NamedDataSource;
  */
 public  abstract class AbstractStatusChangeListen implements StatusChangeListen {
     @Override
-    public void changeToAvailable(NamedDataSource namedDataSource) {
+    public void changeToAvailable(final NamedDataSource namedDataSource) {
 
     }
 
     @Override
-    public void changeToUnavailable(NamedDataSource namedDataSource) {
+    public void changeToUnavailable(final NamedDataSource namedDataSource) {
 
     }
 }

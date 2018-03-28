@@ -12,12 +12,12 @@ public class DefStatusChangeListen extends AbstractStatusChangeListen {
     private static final Logger logger = LoggerFactory.getLogger(DefStatusChangeListen.class);
 
     @Override
-    public void changeToAvailable(NamedDataSource namedDataSource) {
-        logger.error(String.format("数据源[%s]已回复正常!", namedDataSource.getName()));
+    public void changeToAvailable(final NamedDataSource namedDataSource) {
+        logger.error(String.format("数据源[%s]恢复正常!", namedDataSource.getName()));
     }
 
     @Override
-    public void changeToUnavailable(NamedDataSource namedDataSource) {
+    public void changeToUnavailable(final NamedDataSource namedDataSource) {
         logger.error(String.format("数据源[%s]故障!", namedDataSource.getName()));
     }
 }
