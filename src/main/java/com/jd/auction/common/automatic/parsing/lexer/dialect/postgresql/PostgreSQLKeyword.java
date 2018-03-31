@@ -1,0 +1,47 @@
+package com.jd.auction.common.automatic.parsing.lexer.dialect.postgresql;
+
+import com.jd.auction.common.automatic.parsing.lexer.token.Keyword;
+
+public enum PostgreSQLKeyword implements Keyword {
+    
+    SHOW,
+    ONLY,
+    ARRAY,
+    FIRST,
+    NEXT,
+    LAST,
+    LIMIT,
+    OFFSET,
+    RESTART,
+    RECURSIVE,
+    CURRENT,
+    RESTRICT,
+    NOWAIT,
+    TYPE,
+    UNLOGGED,
+    CONTINUE,
+    RETURNING,
+    ROWS,
+    SHARE,
+    IDENTITY,
+    WINDOW,
+    STATISTICS,
+    RESET,
+    PLAIN,
+    EXTERNAL,
+    EXTENDED,
+    MAIN,
+    VALID,
+    REPLICA,
+    ALWAYS,
+    RULE,
+    CLUSTER,
+    OIDS,
+    INHERIT,
+    OWNER,
+    DEFERRABLE,
+    INITIALLY,
+    DEFERRED,
+    IMMEDIATE,
+    EXTRACT
+}
