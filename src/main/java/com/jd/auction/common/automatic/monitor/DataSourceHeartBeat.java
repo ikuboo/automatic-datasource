@@ -78,15 +78,21 @@ class ValidateDataSourceTask implements Runnable {
         }
 
         for (NamedDataSource namedDataSource : unAvailableDataSource) {
-            Future<Boolean> validateCall = executorService.submit(new HeartBeatCallAble(executorService, namedDataSource));
+
+
+            Future<Boolean> validateCall = executorService.submit(new HeartBeatCallAble(namedDataSource));
+
             try {
                 Boolean validateResult = validateCall.get(5, TimeUnit.SECONDS);
                 if (validateResult) {
                     DataSourceStateJudge.changeToAvailable(namedDataSource);
+
                 }
-            } catch (InterruptedException | ExecutionException | TimeoutException e) {
-                //TODO 超时中止线程
-                logger.debug(String.format("心跳数据源[%s]超时!threadName=[%s]",namedDataSource.getName(), Thread.currentThread().getName()));
+            } catch (TimeoutException e) {
+                logger.debug(String.format("心跳数据源[%s]超时!",namedDataSource.getName()));
+                validateCall.cancel(true);
+            }   catch (InterruptedException | ExecutionException e) {
+                logger.debug(String.format("心跳数据源[%s]被中断!",namedDataSource.getName()));
             }
         }
     }
@@ -94,26 +100,27 @@ class ValidateDataSourceTask implements Runnable {
 
 
 class HeartBeatCallAble implements Callable<Boolean>{
-    private final ExecutorService executorService;
-    private final NamedDataSource namedDataSource;
+
     private static final Logger logger = LoggerFactory.getLogger(HeartBeatCallAble.class);
-    public HeartBeatCallAble(final ExecutorService executorService, final NamedDataSource namedDataSource) {
-        this.executorService = executorService;
+
+    private final NamedDataSource namedDataSource;
+
+    public HeartBeatCallAble(final NamedDataSource namedDataSource) {
         this.namedDataSource = namedDataSource;
     }
 
     @Override
-    public Boolean call() throws Exception {
+    public Boolean call(){
         try {
             Connection connection = namedDataSource.getDataSource().getConnection();
             Statement statement = connection.createStatement();
             statement.executeQuery("select 1");
             statement.close();
             connection.close();
+
             logger.debug(String.format("心跳数据源[%s]成功!threadName=[%s] ", namedDataSource.getName(), Thread.currentThread().getName()));
             return true;
-        } catch (Exception e) {
-            logger.debug(String.format("心跳数据源[%s]失败 !threadName=[%s] ", namedDataSource.getName(), Thread.currentThread().getName()));
+        }catch (Exception e) {
             return false;
         }
     }
