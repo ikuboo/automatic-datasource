@@ -44,7 +44,13 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
     private ReentrantLock lock = new ReentrantLock();
 
 
-    private static final ThreadLocal<Boolean> USER_MASTER_FLAG = new ThreadLocal<Boolean>() {
+    private static final ThreadLocal<Boolean> USER_MASTER_SQL = new ThreadLocal<Boolean>() {
+        @Override
+        protected Boolean initialValue() {
+            return false;
+        }
+    };
+    private static final ThreadLocal<Boolean> USER_MASTER_HAND = new ThreadLocal<Boolean>() {
         @Override
         protected Boolean initialValue() {
             return false;
@@ -53,8 +59,8 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
 
     public NamedDataSource getDataSource(final SQLType sqlType) {
 
-        if (isMasterRoute(sqlType)) {
-            USER_MASTER_FLAG.set(true);
+        if (USER_MASTER_HAND.get() || isMasterRoute(sqlType)) {
+            USER_MASTER_SQL.set(true);
             logger.error("当前使用数据源:{}", masterDataSource.getName());
             return masterDataSource;
         }
@@ -69,7 +75,7 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
     }
 
     private boolean isMasterRoute(final SQLType sqlType) {
-        return SQLType.DQL != sqlType || USER_MASTER_FLAG.get();
+        return SQLType.DQL != sqlType || USER_MASTER_SQL.get();
     }
 
     @Override
@@ -133,17 +139,21 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
      * 销毁连接池
      */
     public void destory(){
-        resetMasterFlag();
+        USER_MASTER_HAND.remove();
+        USER_MASTER_SQL.remove();
         DataSourceHeartBeat.destory();
 
     }
 
-    public static void resetMasterFlag() {
-        USER_MASTER_FLAG.remove();
+    public static void resetMasterSQL() {
+        USER_MASTER_SQL.remove();
     }
 
     public static void userMaster(){
-        USER_MASTER_FLAG.set(true);
+        USER_MASTER_HAND.set(true);
+    }
+    public static void userMasterClear(){
+        USER_MASTER_HAND.remove();
     }
 
 
