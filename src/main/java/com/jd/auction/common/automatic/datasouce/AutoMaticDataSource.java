@@ -55,6 +55,7 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
 
         if (isMasterRoute(sqlType)) {
             USER_MASTER_FLAG.set(true);
+            logger.error("当前使用数据源:{}", masterDataSource.getName());
             return masterDataSource;
         }
 
@@ -63,7 +64,7 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
                 loadBalanceStrategy.getLoadBalance().getDataSource(masterDataSource, slaveDataSources);
 
         Preconditions.checkArgument(selectedSource != null ,"无可用的slave数据源");
-        logger.error("当前使用Slave数据源:{}", selectedSource.getName());
+        logger.error("当前使用数据源:{}", selectedSource.getName());
         return selectedSource;
     }
 
@@ -132,7 +133,7 @@ public class AutoMaticDataSource extends AbstractDataSourceAdapter {
      * 销毁连接池
      */
     public void destory(){
-        USER_MASTER_FLAG.remove();
+        resetMasterFlag();
         DataSourceHeartBeat.destory();
 
     }
